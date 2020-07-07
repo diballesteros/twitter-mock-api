@@ -1,27 +1,17 @@
-const MongoClient = require('mongodb').MongoClient;
+const mongoose = require('mongoose');
 
-let mongoDB;
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
+mongoose.set('useUnifiedTopology', true);
 
 const setupDB = callback => {
     const uri = 'mongodb+srv://admin:XbkPACQm@cluster0-ufqxk.mongodb.net/TwitterMock?retryWrites=true&w=majority'
 
-    MongoClient.connect(
-        uri,
-        { useNewUrlParser: true, useUnifiedTopology: true },
-        (err, client) => {
-            mongoDB = client.db('full-stack-server');
-
-            if (err) {
-                return callback(err);
-            } else {
-                return callback('DB OK');
-            }
-        }
-    );
+    mongoose.connect(uri);
+    mongoose.connection.once('open', () => {
+        callback('DB OK');
+    })
 };
 
-const getDB = () => {
-    return mongoDB;
-};
-
-module.exports = { setupDB, getDB };
+module.exports = { setupDB };

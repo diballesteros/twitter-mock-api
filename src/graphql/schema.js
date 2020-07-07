@@ -1,26 +1,13 @@
 const { GraphQLSchema, GraphQLObjectType, GraphQLString, GraphQLID, GraphQLList } = require('graphql');
-const { userType, tweetType } = require('./nodeTypes');
+const { userType, tweetType } = require('./NodeTypes');
+const User = require('../models/user');
+const Tweet = require('../models/tweet');
 const {
-    CreateTweetMutation,
-    UpdateTweetMutation,
-    DeleteTweetMutation
-} = require('./mutation/TweetsMutation');
+    CreateUserMutation
+} = require('./mutation/UserMutation');
+const { CreateTweetMutation } = require('./mutation/TweetMutation');
 const _ = require('lodash');
 
-var users = [
-    { username: 'User1', password: 'password', userId: '1' },
-    { username: 'User2', password: 'password', userId: '2' },
-    { username: 'User3', password: 'password', userId: '3' }
-];
-
-var tweets = [
-    { id: '1', userId: '1', content: 'First Tweet', date: "date" },
-    { id: '2', userId: '1', content: 'Second Tweet', date: "date" },
-    { id: '3', userId: '2', content: 'Third Tweet', date: "date" },
-    { id: '4', userId: '3', content: 'Fourth Tweet', date: "date" },
-    { id: '5', userId: '3', content: 'Fifth Tweet', date: "date" },
-    { id: '6', userId: '3', content: 'Sixth Tweet', date: "date" }
-];
 
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
@@ -29,40 +16,39 @@ const RootQuery = new GraphQLObjectType({
             type: tweetType,
             args: { id: { type: GraphQLID } },
             resolve(parent, args) {
-                return _.find(tweets, { id: args.id });
+                return Tweet.findById(args.id)
             }
         },
         user: {
             type: userType,
-            args: { username: { type: GraphQLString } },
+            args: { id: { type: GraphQLID } },
             resolve(parent, args) {
-                return _.find(users, { username: args.username });
+                return User.findById(args.id);
             }
         },
         tweets: {
             type: new GraphQLList(tweetType),
             resolve(parent, args) {
-                return tweets;
+                return Tweet.find({});
             }
         },
         users: {
             type: new GraphQLList(userType),
             resolve(parent, args) {
-                return users;
+                return User.find({});
             }
         }
     }
 });
 
-const MutationType = new GraphQLObjectType({
+const Mutation = new GraphQLObjectType({
     name: 'Mutation',
     fields: () => ({
-        createTweet: CreateTweetMutation,
-        deleteTweet: DeleteTweetMutation,
-        updateTweet: UpdateTweetMutation
+        createUser: CreateUserMutation,
+        createTweet: CreateTweetMutation
     })
 });
 
-const schema = new GraphQLSchema({ query: RootQuery });
+const schema = new GraphQLSchema({ query: RootQuery, mutation: Mutation });
 
 module.exports = schema;

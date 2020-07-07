@@ -1,20 +1,7 @@
 const { GraphQLObjectType, GraphQLID, GraphQLString, GraphQLList } = require('graphql');
 const _ = require('lodash');
-
-var users = [
-    { username: 'User1', password: 'password', userId: '1' },
-    { username: 'User2', password: 'password', userId: '2' },
-    { username: 'User3', password: 'password', userId: '3' }
-];
-
-var tweets = [
-    { id: '1', userId: '1', content: 'First Tweet', date: "date" },
-    { id: '2', userId: '1', content: 'Second Tweet', date: "date" },
-    { id: '3', userId: '2', content: 'Third Tweet', date: "date" },
-    { id: '4', userId: '3', content: 'Fourth Tweet', date: "date" },
-    { id: '5', userId: '3', content: 'Fifth Tweet', date: "date" },
-    { id: '6', userId: '3', content: 'Sixth Tweet', date: "date" }
-];
+const User = require('../models/user');
+const Tweet = require('../models/tweet');
 
 const tweetType = new GraphQLObjectType({
     name: 'Tweet',
@@ -25,7 +12,7 @@ const tweetType = new GraphQLObjectType({
         user: {
             type: userType,
             resolve(parent, args) {
-                return _.find(users, { userId: parent.userId });
+                return User.findById(parent.userId)
             }
         }
     })
@@ -40,7 +27,7 @@ const userType = new GraphQLObjectType({
         tweets: {
             type: new GraphQLList(tweetType),
             resolve(parent, args) {
-                return _.filter(tweets, { userId: parent.userId});
+                return Tweet.find({ userId: parent.id })
             }
         }
     })
