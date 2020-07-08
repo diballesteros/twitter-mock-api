@@ -5,8 +5,12 @@ const Tweet = require('../models/tweet');
 const {
     CreateUserMutation
 } = require('./mutation/UserMutation');
-const { CreateTweetMutation } = require('./mutation/TweetMutation');
-const _ = require('lodash');
+const { 
+    CreateTweetMutation 
+} = require('./mutation/TweetMutation');
+const { 
+    CreateFollowerMutation 
+} = require('./mutation/FollowerMutation');
 
 
 const RootQuery = new GraphQLObjectType({
@@ -45,7 +49,8 @@ const Mutation = new GraphQLObjectType({
     name: 'Mutation',
     fields: () => ({
         createUser: CreateUserMutation,
-        createTweet: CreateTweetMutation
+        createTweet: CreateTweetMutation,
+        createFollower: CreateFollowerMutation
     })
 });
 

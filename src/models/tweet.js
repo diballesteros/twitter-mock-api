@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 const tweetSchema = new Schema({
     content: String,
     date: String,
-    userId: String
+    userId: String,
+    replyTweetId: String
 });
 
 module.exports = mongoose.model('Tweet', tweetSchema);
