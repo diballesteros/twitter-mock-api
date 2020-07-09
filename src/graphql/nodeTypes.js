@@ -12,28 +12,29 @@ const tweetType = new GraphQLObjectType({
         id: { type: GraphQLID },
         content: { type: GraphQLString },
         date: { type: GraphQLString },
+        parentReplyId: { type: GraphQLID },
         user: {
             type: userType,
             resolve(parent, args) {
-                return User.findById(parent.userId)
+                return User.findById(parent.userId);
             }
         },
         likes: {
             type: new GraphQLList(likeType),
             resolve(parent, args) {
-                return Like.find({ tweetId: parent.id })
+                return Like.find({ tweetId: parent.id });
             }
         },
         retweets: {
             type: new GraphQLList(retweetType),
             resolve(parent, args) {
-                return Retweet.find({ tweetId: parent.id })
+                return Retweet.find({ tweetId: parent.id });
             }
         },
         replies: {
             type: new GraphQLList(tweetType),
             resolve(parent, args) {
-                return Tweet.find({ id: parent.replyTweetId })
+                return Tweet.find({ replyTweetId: parent.id });
             }
         }
     })
