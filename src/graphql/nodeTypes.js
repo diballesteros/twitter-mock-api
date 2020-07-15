@@ -12,11 +12,11 @@ const tweetType = new GraphQLObjectType({
         id: { type: GraphQLID },
         content: { type: GraphQLString },
         date: { type: GraphQLString },
-        parentReplyId: { type: GraphQLID },
+        replyTweet: { type: GraphQLID },
         user: {
             type: userType,
             resolve(parent, args) {
-                return User.findById(parent.userId);
+                return User.findById(parent.user);
             }
         },
         likes: {
@@ -52,7 +52,7 @@ const userType = new GraphQLObjectType({
         tweets: {
             type: new GraphQLList(tweetType),
             resolve(parent, args) {
-                return Tweet.find({ userId: parent.id });
+                return Tweet.find({ user: parent.id });
             }
         },
         followers: {
@@ -94,7 +94,7 @@ const likeType = new GraphQLObjectType({
         tweet: {
             type: tweetType,
             resolve(parent, args) {
-                return User.findById(parent.tweetId)
+                return Tweet.findById(parent.tweetId)
             }
         }
     })

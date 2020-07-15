@@ -8,16 +8,15 @@ const CreateTweetMutation = {
     type: tweetType,
     args: {
         content: { type: new GraphQLNonNull(GraphQLString) },
-        date: { type: new GraphQLNonNull(GraphQLString) },
-        userId: { type: new GraphQLNonNull(GraphQLID) },
-        replyTweetId: { type: GraphQLID}
+        user: { type: new GraphQLNonNull(GraphQLID) },
+        replyTweet: { type: GraphQLID}
     },
     resolve(parents, args) {
         let tweet = new Tweet({
             content: args.content,
-            date: args.date,
-            userId: args.userId,
-            replyTweetId: args.replyTweetId
+            date:  Date.now(),
+            user: args.user,
+            replyTweet: args.replyTweet
         })
         return tweet.save();
     }

@@ -14,7 +14,6 @@ const {
 const { CreateLikeMutation } = require('./mutation/LikeMutation');
 const { CreateRetweetMutation } = require('./mutation/RetweetMutation');
 
-
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {

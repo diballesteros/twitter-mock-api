@@ -6,7 +6,13 @@ const userSchema = new Schema({
     password: String,
     joinDate: String,
     displayName: String,
-    picture: String
+    picture: String,
+    tweets: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Tweet'
+        }
+    ]
 })
 
 module.exports = mongoose.model('User', userSchema);
