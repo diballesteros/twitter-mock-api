@@ -2,17 +2,7 @@ const { GraphQLSchema, GraphQLObjectType, GraphQLString, GraphQLID, GraphQLList 
 const { userType, tweetType } = require('./NodeTypes');
 const User = require('../models/user');
 const Tweet = require('../models/tweet');
-const {
-    CreateUserMutation
-} = require('./mutation/UserMutation');
-const { 
-    CreateTweetMutation 
-} = require('./mutation/TweetMutation');
-const { 
-    CreateFollowerMutation 
-} = require('./mutation/FollowerMutation');
-const { CreateLikeMutation } = require('./mutation/LikeMutation');
-const { CreateRetweetMutation } = require('./mutation/RetweetMutation');
+const { CreateUserMutation, CreateTweetMutation, CreateFollowerMutation, CreateLikeMutation, CreateRetweetMutation } = require('./mutation/RootMutations');
 
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
@@ -46,7 +36,7 @@ const RootQuery = new GraphQLObjectType({
     }
 });
 
-const Mutation = new GraphQLObjectType({
+const RootMutation = new GraphQLObjectType({
     name: 'Mutation',
     fields: () => ({
         createUser: CreateUserMutation,
@@ -57,6 +47,6 @@ const Mutation = new GraphQLObjectType({
     })
 });
 
-const schema = new GraphQLSchema({ query: RootQuery, mutation: Mutation });
+const schema = new GraphQLSchema({ query: RootQuery, mutation: RootMutation });
 
 module.exports = schema;
