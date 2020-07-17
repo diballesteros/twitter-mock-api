@@ -8,15 +8,13 @@ module.exports = {
     CreateTweetMutation: {
         type: tweetType,
         args: {
-            content: { type: new GraphQLNonNull(GraphQLString) },
-            user: { type: new GraphQLNonNull(GraphQLID) },
-            replyTweet: { type: GraphQLID}
+            content: { type: new GraphQLNonNull(GraphQLString) }
         },
         resolve(parents, args) {
             let tweet = new Tweet({
                 content: args.content,
                 date:  Date.now(),
-                user: args.user,
+                user: '5f0659c70f8d332174afaf38',
                 replyTweet: args.replyTweet
             })
             return tweet.save();

@@ -10,7 +10,7 @@ const setupDB = callback => {
 
     mongoose.connect(uri);
     mongoose.connection.once('open', () => {
-        callback('DB OK');
+        callback('Mongo Atlas connection successfully established');
     })
 };
 

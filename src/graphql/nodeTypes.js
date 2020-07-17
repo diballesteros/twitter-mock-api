@@ -1,4 +1,4 @@
-const { GraphQLObjectType, GraphQLID, GraphQLString, GraphQLList } = require('graphql');
+const { GraphQLObjectType, GraphQLID, GraphQLString, GraphQLList, GraphQLInt } = require('graphql');
 
 const User = require('../models/user');
 const Tweet = require('../models/tweet');
@@ -118,4 +118,19 @@ const retweetType = new GraphQLObjectType({
     })
 });
 
-module.exports = { userType, tweetType, followerType, likeType, retweetType };
+const authDataType = new GraphQLObjectType({
+    name: 'AuthData',
+    fields: () => ({
+        id: { type: GraphQLID },
+        token: { type: GraphQLString },
+        tokenExpiration: { type: GraphQLInt },
+        user: {
+            type: userType,
+            resolve(parent, args) {
+                return User.findById(parent.user);
+            }
+        }
+    })
+})
+
+module.exports = { userType, tweetType, followerType, likeType, retweetType, authDataType };

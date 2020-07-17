@@ -1,5 +1,5 @@
-const { GraphQLSchema, GraphQLObjectType, GraphQLString, GraphQLID, GraphQLList } = require('graphql');
-const { userType, tweetType } = require('./NodeTypes');
+const { GraphQLSchema, GraphQLObjectType, GraphQLString, GraphQLID, GraphQLList, GraphQLNonNull } = require('graphql');
+const { userType, tweetType, authDataType } = require('./NodeTypes');
 const User = require('../models/user');
 const Tweet = require('../models/tweet');
 const { CreateUserMutation, CreateTweetMutation, CreateFollowerMutation, CreateLikeMutation, CreateRetweetMutation } = require('./mutation/RootMutations');
@@ -31,6 +31,19 @@ const RootQuery = new GraphQLObjectType({
             type: new GraphQLList(userType),
             resolve(parent, args) {
                 return User.find({});
+            }
+        },
+        login: {
+            type: authDataType,
+            args: {
+                username: {type: new GraphQLNonNull(GraphQLString)},
+                password: { type: new GraphQLNonNull(GraphQLString)}
+            },
+            resolve(parent, args) {
+                const userLogin = User.findOne({username: args.username});
+                if (!user) {
+                    
+                }
             }
         }
     }

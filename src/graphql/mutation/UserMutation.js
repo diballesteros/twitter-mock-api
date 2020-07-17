@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const { userType } = require('../NodeTypes');
 const User = require('../../models/user');
 const {
@@ -10,19 +11,27 @@ module.exports = {
         args: {
             username: { type: new GraphQLNonNull(GraphQLString) },
             password: { type: new GraphQLNonNull(GraphQLString) },
-            joinDate: { type: new GraphQLNonNull(GraphQLString) },
             displayName: { type: new GraphQLNonNull(GraphQLString) },
             picture: { type: GraphQLString }
         },
-        resolve(parent, args) {
-            let user = new User({
-                username: args.username,
-                password: args.password,
-                joinDate: args.joinDate,
-                displayName: args.displayName,
-                picture: args.picture
-            });
-            return user.save();
+        resolve: async (parents, args) => {
+            try {
+                const userExists = await User.findOne({ username: args.username });
+                if (userExists) {
+                    throw new Error('User exists already');
+                }
+                const hashedPassword = await bcrypt.hash(args.password, 12);
+                const user = new User({
+                    username: args.username,
+                    password: hashedPassword,
+                    joinDate: Date.now(),
+                    displayName: args.displayName,
+                    picture: args.picture
+                });
+                return await user.save();
+            } catch (err) {
+                throw err;
+            }
         }
     }
 } 
