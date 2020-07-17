@@ -121,7 +121,6 @@ const retweetType = new GraphQLObjectType({
 const authDataType = new GraphQLObjectType({
     name: 'AuthData',
     fields: () => ({
-        id: { type: GraphQLID },
         token: { type: GraphQLString },
         tokenExpiration: { type: GraphQLInt },
         user: {

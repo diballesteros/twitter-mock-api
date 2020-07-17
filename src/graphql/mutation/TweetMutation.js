@@ -10,14 +10,17 @@ module.exports = {
         args: {
             content: { type: new GraphQLNonNull(GraphQLString) }
         },
-        resolve(parents, args) {
-            let tweet = new Tweet({
+        resolve: async (parents, args, req) =>  {
+            if (!req.isAuth) {
+                throw new Error('Unauthenticated');
+            }
+            const tweet = new Tweet({
                 content: args.content,
                 date:  Date.now(),
-                user: '5f0659c70f8d332174afaf38',
+                user: req.user,
                 replyTweet: args.replyTweet
             })
-            return tweet.save();
+            return await tweet.save();
         }
     }
 };

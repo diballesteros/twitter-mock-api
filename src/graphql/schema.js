@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const { GraphQLSchema, GraphQLObjectType, GraphQLString, GraphQLID, GraphQLList, GraphQLNonNull } = require('graphql');
 const { userType, tweetType, authDataType } = require('./NodeTypes');
 const User = require('../models/user');
@@ -7,13 +9,6 @@ const { CreateUserMutation, CreateTweetMutation, CreateFollowerMutation, CreateL
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
-        tweet: {
-            type: tweetType,
-            args: { id: { type: GraphQLID } },
-            resolve(parent, args) {
-                return Tweet.findById(args.id)
-            }
-        },
         user: {
             type: userType,
             args: { id: { type: GraphQLID } },
@@ -23,26 +18,35 @@ const RootQuery = new GraphQLObjectType({
         },
         tweets: {
             type: new GraphQLList(tweetType),
-            resolve(parent, args) {
-                return Tweet.find({});
-            }
-        },
-        users: {
-            type: new GraphQLList(userType),
-            resolve(parent, args) {
-                return User.find({});
+            resolve: async (parent, args, req) => {
+                if (!req.isAuth) {
+                    throw new Error('Unauthenticated!');
+                }
+                return await Tweet.find({});
             }
         },
         login: {
             type: authDataType,
             args: {
-                username: {type: new GraphQLNonNull(GraphQLString)},
-                password: { type: new GraphQLNonNull(GraphQLString)}
+                username: { type: new GraphQLNonNull(GraphQLString) },
+                password: { type: new GraphQLNonNull(GraphQLString) }
             },
-            resolve(parent, args) {
-                const userLogin = User.findOne({username: args.username});
-                if (!user) {
-                    
+            resolve: async (parent, args) => {
+                try {
+                    const userLogin = await User.findOne({ username: args.username });
+                    if (!userLogin) {
+                        throw new Error('Invalid credentials');
+                    }
+                    const isEqual = await bcrypt.compare(args.password, userLogin.password);
+                    if (!isEqual) {
+                        throw new Error('Invalid credentials');
+                    }
+                    const token = jwt.sign({ user: userLogin.id, username: userLogin.username }, 'somesupersecretkey', {
+                        expiresIn: '1h',
+                    });
+                    return { user: userLogin.id, token: token, tokenExpiration: 1 };
+                } catch (err) {
+                    throw err;
                 }
             }
         }
