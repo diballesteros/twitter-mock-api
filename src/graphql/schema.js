@@ -12,8 +12,11 @@ const RootQuery = new GraphQLObjectType({
         user: {
             type: userType,
             args: { id: { type: GraphQLID } },
-            resolve(parent, args) {
-                return User.findById(args.id);
+            resolve(parent, args, req) {
+                if (!req.isAuth) {
+                    throw new Error('Unauthenticated!');
+                }  
+                return User.findById(req.id);
             }
         },
         tweets: {
@@ -21,8 +24,8 @@ const RootQuery = new GraphQLObjectType({
             resolve: async (parent, args, req) => {
                 if (!req.isAuth) {
                     throw new Error('Unauthenticated!');
-                }
-                return await Tweet.find({});
+                }   
+                return await Tweet.find({user: req.user});
             }
         },
         login: {
@@ -33,7 +36,7 @@ const RootQuery = new GraphQLObjectType({
             },
             resolve: async (parent, args) => {
                 try {
-                    const userLogin = await User.findOne({ username: args.username });
+                    const userLogin = await User.findOne({ username: args.username.toLowerCase() });
                     if (!userLogin) {
                         throw new Error('Invalid credentials');
                     }

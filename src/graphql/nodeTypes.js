@@ -60,6 +60,12 @@ const userType = new GraphQLObjectType({
             resolve(parent, args) {
                 return Follower.find({ userId: parent.id });
             }
+        },
+        following: {
+            type: new GraphQLList(followerType),
+            resolve(parent, args) {
+                return Follower.find({ userId: parent.id });
+            }
         }
     })
 });
@@ -70,13 +76,13 @@ const followerType = new GraphQLObjectType({
         user: {
             type: userType,
             resolve(parent, args) {
-                return User.findById(parent.userId)
+                return User.findById(parent.user)
             }
         },
         follower: {
             type: userType,
             resolve(parent, args) {
-                return User.findById(parent.followerUserId)
+                return User.findById(parent.follower)
             }
         }
     })

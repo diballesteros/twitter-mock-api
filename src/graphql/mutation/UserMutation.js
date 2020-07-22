@@ -16,13 +16,13 @@ module.exports = {
         },
         resolve: async (parents, args) => {
             try {
-                const userExists = await User.findOne({ username: args.username });
+                const userExists = await User.findOne({ username: args.username.toLowerCase() });
                 if (userExists) {
                     throw new Error('User exists already');
                 }
                 const hashedPassword = await bcrypt.hash(args.password, 12);
                 const user = new User({
-                    username: args.username,
+                    username: args.username.toLowerCase(),
                     password: hashedPassword,
                     joinDate: Date.now(),
                     displayName: args.displayName,
