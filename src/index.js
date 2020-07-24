@@ -6,20 +6,20 @@ const isAuth = require('./middleware/isAuthenticated');
 const cors = require('cors');
 
 const app = express();
-setupDB(v => console.log(v));
+setupDB((v) => console.log(v));
 
 app.use(isAuth);
 
 app.use(cors());
 app.use(
-    '/graphql',
-    graphqlHTTP({
-        schema,
-        graphiql: true,
-        pretty: true
-    })
+	'/graphql',
+	graphqlHTTP({
+		schema,
+		graphiql: true,
+		pretty: true,
+	})
 );
 
 app.listen(4000, () => {
-    console.log('Now listening for requests on port 4000');
+	console.log('Now listening for requests on port 4000');
 });

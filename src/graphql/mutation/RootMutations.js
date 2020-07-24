@@ -5,11 +5,11 @@ const LikeMutation = require('./LikeMutation');
 const RetweetMutation = require('./RetweetMutation');
 
 const RootMutations = {
-    ...UserMutation,
-    ...TweetMutation,
-    ...FollowerMutation,
-    ...LikeMutation,
-    ...RetweetMutation
+	...UserMutation,
+	...TweetMutation,
+	...FollowerMutation,
+	...LikeMutation,
+	...RetweetMutation,
 };
 
 module.exports = RootMutations;
